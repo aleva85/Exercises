@@ -91,5 +91,76 @@ def plot_predictions(clf, axes):
 plot_predictions(polynomial_svm_clf, [-1.5, 2.5, -1, 1.5])
 plot_dataset(X, y, [-1.5, 2.5, -1, 1.5])
 
+# high polynomial degrees are expensive - kernel MAGIC!
+poly100_kernel_svm_clf = Pipeline([
+        ("scaler", StandardScaler()),
+        ("svm_clf", SVC(kernel="poly", degree=10, coef0=100, C=5))
+    ])
+poly100_kernel_svm_clf.fit(X, y)
+# same result as adding features, without adding them!
+# coeff0 - how much the model is influienced by high order (regularization)
+# increase degree if underfitting
+# search hyperparam with gridsearchCV()
+
+# add similarity features for each instance, representing its distance from a landmark (usually another feature)
+# increases dimension and thus chance of finding linear separators
+# can be dion e with kerne4ls
+rbf_kernel_svm_clf = Pipeline([
+        ("scaler", StandardScaler()),
+        ("svm_clf", SVC(kernel="rbf", gamma=5, C=0.001))
+    ])
+rbf_kernel_svm_clf.fit(X, y)
+
+# nicely visualize
+from sklearn.svm import SVC
+
+gamma1, gamma2 = 0.1, 5
+C1, C2 = 0.001, 1000
+hyperparams = (gamma1, C1), (gamma1, C2), (gamma2, C1), (gamma2, C2)
+
+svm_clfs = []
+for gamma, C in hyperparams:
+    rbf_kernel_svm_clf = Pipeline([
+            ("scaler", StandardScaler()),
+            ("svm_clf", SVC(kernel="rbf", gamma=gamma, C=C))
+        ])
+    rbf_kernel_svm_clf.fit(X, y)
+    svm_clfs.append(rbf_kernel_svm_clf)
+
+plt.figure(figsize=(11, 7))
+
+for i, svm_clf in enumerate(svm_clfs):
+    plt.subplot(221 + i)
+    plot_predictions(svm_clf, [-1.5, 2.5, -1, 1.5])
+    plot_dataset(X, y, [-1.5, 2.5, -1, 1.5])
+    gamma, C = hyperparams[i]
+    plt.title(r"$\gamma = {}, C = {}$".format(gamma, C), fontsize=16)
+
+save_fig("moons_rbf_svc_plot")
+plt.show()
+
+
+
+
+### SVM regression
+np.random.seed(42)
+m = 50
+X = 2 * np.random.rand(m, 1)
+y = (4 + 3 * X + np.random.randn(m, 1)).ravel()
+
+from sklearn.svm import LinearSVR
+
+svm_reg = LinearSVR(epsilon=1.5, random_state=42)
+svm_reg.fit(X, y)
+
+# nonlinear
+from sklearn.svm import SVR
+
+svm_poly_reg1 = SVR(kernel="poly", degree=2, C=100, epsilon=0.1)
+svm_poly_reg2 = SVR(kernel="poly", degree=2, C=0.01, epsilon=0.1)
+svm_poly_reg1.fit(X, y)
+svm_poly_reg2.fit(X, y)
+
+
 
 
