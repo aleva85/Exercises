@@ -26,6 +26,10 @@ X = X[setosa_or_versicolor]
 y = y[setosa_or_versicolor]
 
 # SVM Classifier model
+# linearSVC are fast, but do not output probabilities
+# this ciould be done with SVC, setting the hyperparam probability=True, which will execute cross-validation
+# SVC also deals with nonlinear problems
+# another option is SGDClassifier(loss='hinge',alpha=1/(m*C)), good for online classification or huge dataset that don't fit in memory
 svm_clf = SVC(kernel="linear", C=float("inf"))
 svm_clf.fit(X, y)
 
