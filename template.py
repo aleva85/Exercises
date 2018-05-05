@@ -30,6 +30,13 @@ df.min() # Returns the lowest value in each column
 df.median() # Returns the median of each column
 df.std() # Returns the standard deviation of each column
 
+# Visualize
+df.hist()
+pd.plotting.scatter_matrix(df)
+
+
+
+
 
 # Selecting
 df[col] # Returns column with label col as Series
@@ -56,6 +63,7 @@ df.rename(columns=lambda x: x + 1) # Mass renaming of columns
 df.rename(columns={'old_name': 'new_ name'}) # Selective renaming
 df.set_index('column_one') # Changes the index
 df.rename(index=lambda x: x + 1) # Mass renaming of index
+df[df.XXX != 0]
 
 
 # Filter, sort, group
@@ -67,7 +75,7 @@ df.sort_values([col1,col2], ascending=[True,False]) # Sorts values by col1 in as
 df.groupby(col) # Returns a groupby object for values from one column
 df.groupby([col1,col2]) # Returns a groupby object values from multiple columns
 df.groupby(col1)[col2].mean() # Returns the mean of the values in col2, grouped by the values in col1 (mean can be replaced with almost any function from the statistics section)
-df.pivot_table(index=col1, values= col2,col3], aggfunc=mean) # Creates a pivot table that groups by col1 and calculates the mean of col2 and col3
+df.pivot_table(index=col1, values= [col2,col3], aggfunc=mean) # Creates a pivot table that groups by col1 and calculates the mean of col2 and col3
 df.groupby(col1).agg(np.mean) # Finds the average across all columns for every unique column 1 group
 df.apply(np.mean) # Applies a function across each column
 df.apply(np.max, axis=1) # Applies a function across each row
